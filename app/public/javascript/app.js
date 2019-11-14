@@ -139,7 +139,7 @@ var createQuestion = function(Q,A,questionNumber){
 
   // 1.4.2 POSSIBLE ANSWERS
   var answers = $("<div>").addClass("col-8 answers");
-  answers.append($("<ul>").addClass("list-group"));
+  answers.append($("<ul>").addClass("list-group list-group-horizontal"));
 
   var random_answer_index = generateRandomNumber(0,Q.answer.length);
   var possible_answers = [];
@@ -147,12 +147,12 @@ var createQuestion = function(Q,A,questionNumber){
   possible_answers = $.merge(possible_answers,Q.wrong);
 
   // Shuffle the possible answers so the correct answer is not always the first one. 
-  possible_answers = shuffle_array(possible_answers);
+  // possible_answers = shuffle_array(possible_answers);
 
   var check_answer_element = false;
   var correct_answer_text = false;
   for(var i=0; i < possible_answers.length; i++ ){
-    var answer_option = $("<li>").addClass("list-group-item");
+    var answer_option = $("<li>").addClass("list-group-item fa fa-heart full");
     answer_option.html($("<div>").addClass("custom-control custom-checkbox mr-sm-2"));
 
     var answer_input = $("<input>").attr("type","checkbox").addClass("custom-control-input").attr("id","answer"+i).attr("data-answer-index",possible_answers[i]);

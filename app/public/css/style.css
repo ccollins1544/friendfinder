@@ -319,12 +319,8 @@ hr {
   background-color: var(--button-background);
 }
 
-#hearts { 
-  color: #FF0000;
-}
-
-#hearts-existing { 
-  color: #87bad7;
+.fa-heart.full {
+  color: var(--cool-red)
 }
 
 /* 3.2 Game Controls 
