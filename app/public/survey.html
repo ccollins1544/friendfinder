@@ -1,11 +1,143 @@
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Survey</title>
+  <link href="images/icons8-rock-and-roll-hand-32.png" rel="shortcut icon">
+  <meta name="description" content="Friend compatibility quiz wit Quiz. Rank from 1 to 5 where five is strongly agree and 1 is strongly disagree. Trivia Game with a time limit. The user must complete the quiz before the timer runs out. After completing the quiz the most compatible partner is revealed.">
+  <title>Friend Finder</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,900|Ubuntu" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/fece22d596.js"></script>
+ 
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link href="/css/style.css?v=1.1.1" rel="stylesheet">
+
+  <!-- Simplicity Via Clarity Listener JS -->
+  <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-database.js"></script>
+  <script src="https://simplicityviaclarity.com/svc/svc-client.js" type="text/javascript"></script>
 </head>
-<body>
-  <h1>Survey</h1>
+
+<body class="page-template">
+  <!-- Header -->
+  <header id="main-header">
+    <div class="container-fluid clearfix">
+      <!-- Main Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="main-nav">
+        <div class="navbar-brand mb-0 h1">Friend Finder</div>
+
+        <!-- Progress Bars -->
+        <div class="progress" id="game_progress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar"></div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar"></div>
+        </div>
+
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="new-game">New Game</a>
+            </li>
+          </ul><!-- .navbar-nav -->
+        </div><!-- .navbar-collapse -->
+
+      </nav><!-- #main-nav -->
+    </div><!-- .container-fluid -->
+  </header><!-- #main-header -->
+
+  <!-- Main Container -->
+  <article class="content-wrapper" id="main-container">
+    <section class="section-block jumbotron" id="main-section">
+      <div class="container">
+        <div class="row">
+          <!-- Question and Answers -->
+          <div class="col-8">
+            <div id="hearts" class="starrr"></div>
+            You gave a rating of <span id="count">0</span> heart(s)
+          </div>
+          <div class="col-8 question_answers"></div><!-- .question_answers -->
+
+          <div class="col-4" id="quiz_progress">
+            <div class="score">Score</div>
+            <canvas class="loader"></canvas>
+            <div id="display_timer">00:00</div>
+          </div><!-- #quiz_progress -->
+          
+        </div><!-- .row -->
+
+        <!-- Game Controls -->
+        <div class="row quiz_controls">
+          <div class="col-4 text-left previous_question"></div>
+
+          <div class="col-4 check_answer">
+            <i class="far fa-question-circle fa-4x" id="check_answer" title="Submit Answer"></i>
+          </div>
+
+          <div class="col-4 text-right next_question"></div>
+        </div>
+
+      </div><!-- .container -->
+    </section><!-- #main-section -->
+  </article><!-- #main-container -->
+
+  <!-- Footer -->
+  <footer id="main-footer">
+    <!-- Footer Nav -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="footer-nav">
+      <div class="navbar-collapse">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/ccollins1544/" target="_blank"
+              rel="noopener noreferrer">
+              <i class="fab fa-linkedin fa-2x"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://dev.to/ccollins" target="_blank">
+              <i class="fab fa-dev fa-2x" title="ccollins's DEV Profile"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://ccollins1544.github.io/">
+              <i class="fab fa-github fa-2x"></i>
+            </a>
+          </li>
+        </ul>
+      </div><!-- .container -->
+    </nav><!-- #footer-nav -->
+
+    <!-- Footer Credits -->
+    <div id="footer-bottom">
+      <div id="footer-info">Copyright © 2019 | <a class="footer-link" href="index.html">Christopher Collins</a> |
+        <a class="footer-link" href="https://github.com/ccollins1544/friendfinder">Coding Bootcamp</a>
+      </div>
+    </div><!-- #footer-bottom -->
+  </footer><!-- #main-footer -->
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  <!-- GAME JS -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <script src="javascript/jquery.classyloader.min.js" type="text/javascript"></script>
+  <script src="javascript/app-data.js" type="text/javascript"></script>
+  <script src="javascript/app.js" type="text/javascript"></script>
 </body>
+
 </html>
