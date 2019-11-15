@@ -22,6 +22,7 @@
   3.2 Game Controls 
   3.3 Game Timer and Progress
   3.4 Game Alerts
+  3.5 Hearts and Stars
 
 4.0 FOOTER
   4.1 Footer Links and Credits
@@ -319,10 +320,6 @@ hr {
   background-color: var(--button-background);
 }
 
-.fa-heart.full {
-  color: var(--cool-red)
-}
-
 /* 3.2 Game Controls 
 /*------------------------------------------------------*/
 .quiz_controls .far {
@@ -365,6 +362,24 @@ hr {
 /*------------------------------------------------------*/
 .alert {
   margin-bottom: 0px;
+}
+
+/* 3.5 Hearts and Stars
+/*------------------------------------------------------*/
+.hearts {
+  display: inline-block;
+}
+
+.hearts a {
+  font-size: 16px;
+  padding: 0 1px;
+  cursor: pointer;
+  color: var(--cool-red);
+  text-decoration: none;
+}
+
+.hearts a:hover {
+  color: rgba(233, 41, 15, 0.50);
 }
 
 /*------------------------------------------------------*/
