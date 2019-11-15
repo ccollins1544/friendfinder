@@ -21,6 +21,7 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link href="css/style.css?v=1.1.1" rel="stylesheet">
 
+  
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -28,9 +29,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
     crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
 
   <!-- Simplicity Via Clarity Listener JS -->
   <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-app.js"></script>
@@ -46,10 +50,26 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="main-nav">
         <div class="navbar-brand mb-0 h1">Friend Finder</div>
 
-        <!-- Progress Bars -->
-        <div class="progress" id="game_progress">
-          <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar"></div>
-          <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar"></div>
+        <!-- Modal -->
+        <div class="modal fade" id="MatchModal" tabindex="-1" role="dialog" aria-labelledby="MatchModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="MatchModalLabel">Match</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="collapse navbar-collapse">
@@ -68,23 +88,36 @@
   <article class="content-wrapper" id="main-container">
     <section class="section-block jumbotron" id="main-section">
       <div class="container">
+
         <div class="row">
+          <form class="col-4 mx-auto" id="friend_form" data-ready="0">
+
+            <span class="image_wrap">
+              <img class="img-thumbnail rounded-circle" id="friend_image" src="" alt="">
+            </span>
+            <h2 class="accent_text" id="friend_name"></h2>
+
+            <label for="friend_name">
+              <h3>Enter Your Info</h3>
+            </label>
+            <input type="text" class="form-control" name="friend_name" aria-describedby="emailHelp"
+              placeholder="Enter Your Name">
+            <input type="text" class="form-control" name="friend_image" aria-describedby="emailHelp"
+              placeholder="Enter Your Image URL">
+            <button type="submit" class="btn btn-secondary" id="update_info">Update Info <i
+                class="fas fa-pen"></i></button>
+
+            <button class="btn btn-secondary" id="change_info">Change Info <i class="fas fa-user"></i></button>
+          </form>
+        </div>
+
+        <div class="row">
+          <h3 class="col-12">Questions to Test Your Friend Compatibility</h3>
 
           <!-- Question and Answers -->
-          <div class="col-12 question_answers"></div>
+          <form class="col-12 question_answers" id="compatibility_form"></form>
 
         </div><!-- .row -->
-
-        <!-- Game Controls -->
-        <div class="row quiz_controls">
-          <div class="col-4 text-left previous_question"></div>
-
-          <div class="col-4 check_answer">
-            <i class="far fa-question-circle fa-4x" id="check_answer" title="Submit Answer"></i>
-          </div>
-
-          <div class="col-4 text-right next_question"></div>
-        </div>
 
       </div><!-- .container -->
     </section><!-- #main-section -->
@@ -124,10 +157,7 @@
     </div><!-- #footer-bottom -->
   </footer><!-- #main-footer -->
 
-  <!-- GAME JS -->
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <!-- App JS -->
   <script src="javascript/starrr.js" type="text/javascript"></script>
   <script src="javascript/app.js" type="text/javascript"></script>
 </body>

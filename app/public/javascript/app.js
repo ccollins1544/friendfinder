@@ -72,7 +72,9 @@ function runEffect(element, duration_seconds=2, selectedEffect="pulsate") {
  * @param {string} message - Message to go in the alert box
  * @param {string} addThisClass - defaults to empty string. Can be info, danger, or success. 
  */
-function AlertMessage(message="", addThisClass="info"){
+function AlertMessage(message="", addThisClass="info", appendAfterElement){
+  $('#alert_message').remove();
+
   var alertElement = $("<div>").addClass("col-12 alert").attr("id","alert_message");
   
   // RESET Alert Message
@@ -102,7 +104,12 @@ function AlertMessage(message="", addThisClass="info"){
   
   // Display the alert message
   alertElement.html(message);
-  $("#main-section .first-row").html(alertElement);
+
+  if(appendAfterElement === undefined){
+    appendAfterElement = $("#main-section");
+  }
+
+  appendAfterElement.append(alertElement);
   return;
 } // END gameAlert()
 
@@ -113,28 +120,47 @@ function AlertMessage(message="", addThisClass="info"){
 function questionsQuery(){
   $.ajax({ url: "/api/questions", method: "GET" })
     .then(function(questionsData) {
-      console.log(questionsData);
 
+      var AllQuestionsBlock = $("<ol>").addClass("list-group text-left");
       for (var i=0; i < questionsData.length; i++ ){
-        var question = $("<li>").text(questionsData[i].question).addClass("list-group-item question");
+        var question = $("<li>")
+          .addClass("list-group-item question")
+          .attr("data-start",i).attr("data-end",(questionsData.length-1))
+          .text(questionsData[i].question);
+
+        var questionNumber = $("<span>")
+          .addClass("font-weight-bold")
+          .text(i+1 + ". ");
+
+        question.prepend(questionNumber);
         
-        var hearts_rating = $("<div>").addClass("hearts");
+        var hearts_rating = $("<div>")
+          .addClass("hearts")
+          .attr("data-question-number",i+1);
         hearts_rating.starrr();
 
-        hearts_rating = $("<li>").addClass("list-group-item answer_block").html(hearts_rating);
+        var AnswerBlock = $("<div>")
+          .addClass("list-group-item answer_block")
+          .html(hearts_rating);
 
-        var questionNumber =  (i+1);
-        var q_counter = $("<h3>").text("Question " + questionNumber + " of " + questionsData.length);
-        q_counter = $("<li>").addClass("list-group-item question_counter").attr("data-start",i).attr("data-end",(questionsData.length-1)).html(q_counter);
-        //q_counter = (questionsData[i].subtopic !== "") ? q_counter.append($("<small>").text("Topics: " + questionsData[i].topic + ", " + questionsData[i].subtopic)) : q_counter.append($("<small>").text("Topic: " + questionsData[i].topic));
+        var hiddenInput = $("<input>")
+          .attr("type","hidden").attr("id","question_" + (i+1)).attr("name","question_" + (i+1))
+          .val(0);
+        
+        question.append(AnswerBlock);
+        question.append(hiddenInput);
 
-        question = $("<ul>").addClass("list-group text-left").append(question);
-        question.prepend(q_counter);
-        question.append(hearts_rating);
-
-        $(".question_answers").append(question);
+        AllQuestionsBlock.append(question);
       }
 
+      var checkIcon = $("<i>").addClass("fas fa-check");
+      var submit_button = $("<button>")
+        .attr("type","submit")
+        .addClass("btn btn-primary")
+        .html("Submit ")
+        .append(checkIcon);
+
+      $(".question_answers").append(AllQuestionsBlock, submit_button);
     });
 };
 
@@ -146,4 +172,134 @@ function questionsQuery(){
 $(function(){
   questionsQuery();
   $(document).tooltip();
+  $('#MatchModal').modal({ show: false});
+
+  $('.question_answers').on('starrr:change', '.hearts', function(e, heart_rating){
+    e.preventDefault();
+    var question_number = $(this).data('question-number');
+    var form_input = $("#question_" + question_number);
+    form_input.val(heart_rating);
+  });
+
+  // Change Info Button
+  $('#change_info').on('click', function(event){
+    event.preventDefault();
+    $('#friend_form > span').hide();
+    $('#friend_form > h2.accent_text').hide();
+
+    $('#friend_form > label').show();
+    $('#friend_form > input').show();
+    $('#update_info').show();
+
+    $("#friend_form").data("ready","0"); // not ready 
+    $(this).hide();
+  });
+
+  // Friend Form
+  $('#friend_form').on('submit', function(event){
+    event.preventDefault();
+
+    var isValid = true;
+    var formArray = $('#friend_form').serializeArray();
+    var formData = {};
+
+    for (var i in formArray) {
+      var KEY = "";
+      var VALUE = "";
+  
+      for (var key in formArray[i]) {
+        // console.log(key+" => "+formArray[i][key]);
+  
+        if (key == "name") {
+          KEY = formArray[i][key];
+  
+        } else if (key == "value") {
+          VALUE = formArray[i][key];
+        }
+  
+      }
+
+      formData[KEY] = VALUE.trim();
+
+      // prevent empty entries into database
+      if (formData[KEY] === "" || formData[KEY] === "0") {
+        isValid = false;
+      }
+    }
+
+    $("#friend_name").text(formData['friend_name']);
+    $("#friend_image").attr("alt",formData['friend_name']);
+    $("#friend_image").attr("src",formData['friend_image']);
+
+    $('#friend_form > span').show();
+    $('#friend_form > h2.accent_text').show();
+    $('#change_info').show();
+
+    $('#friend_form > label').hide();
+    $('#friend_form > input').hide();
+    $('#update_info').hide();
+
+    if(isValid){
+      $('#friend_form').data("ready","1"); // ready
+      $('#alert_message').remove();
+    }else{
+      $('#friend_form').data("ready","0"); // not ready
+      AlertMessage("You're missing something. Please double check that you have a valid URL and your name above", "danger", $("#friend_form"));
+    }
+
+    console.log(isValid);
+    console.log(formData);
+  });
+
+  // Compatibility Form
+  $('#compatibility_form').on('submit', function(event){
+    event.preventDefault();
+
+    var unansweredQuestion = 0;
+    var formArray = $('#compatibility_form').serializeArray();
+    var formData = {}; 
+
+    for (var i in formArray) {
+      var KEY = "";
+      var VALUE = "";
+  
+      for (var key in formArray[i]) {
+        // console.log(key+" => "+formArray[i][key]);
+  
+        if (key == "name") {
+          KEY = formArray[i][key];
+  
+        } else if (key == "value") {
+          VALUE = formArray[i][key];
+        }
+  
+      }
+
+      formData[KEY] = VALUE.trim();
+
+      // prevent empty entries into database
+      if ((formData[KEY] === "" || formData[KEY] === "0") && unansweredQuestion == 0 ) {
+        unansweredQuestion = (+i + +1);
+      }
+    }
+
+    console.log(unansweredQuestion);
+    console.log(formData);
+    
+    if( $('#friend_form').data("ready") == 0 ){ // not ready 
+      AlertMessage("You're missing something. Please double check that you have a valid URL and your name above", "danger", $("#compatibility_form"));
+      return; 
+
+    } else if(unansweredQuestion != 0 ){ // Missed a question
+      AlertMessage("You're missing question " + unansweredQuestion, "danger", $("#compatibility_form"));
+      return; 
+
+    } else { // ready!
+      $('#alert_message').remove();
+    }
+
+    $('#MatchModal').modal('show');
+  });
+
+
 }); // END $(document).ready(function() { 
