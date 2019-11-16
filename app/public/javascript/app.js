@@ -116,7 +116,6 @@ function questionsQuery(){
     });
 };
 
-
 /* ===============[ 2. Document Ready ]==================== */ 
 $(function(){
   // 2.1 Initialize 
@@ -159,20 +158,16 @@ $(function(){
       var VALUE = "";
   
       for (var key in formArray[i]) {
-        // console.log(key+" => "+formArray[i][key]);
-  
         if (key == "name") {
           KEY = formArray[i][key];
-  
         } else if (key == "value") {
           VALUE = formArray[i][key];
         }
-  
       }
 
       formData[KEY] = VALUE.trim();
 
-      // prevent empty entries into database
+      // prevent empty entries
       if (formData[KEY] === "" || formData[KEY] === "0") {
         isValid = false;
       }
@@ -215,20 +210,16 @@ $(function(){
       var VALUE = "";
   
       for (var key in formArray[i]) {
-        // console.log(key+" => "+formArray[i][key]);
-  
         if (key == "name") {
           KEY = formArray[i][key];
-  
         } else if (key == "value") {
           VALUE = formArray[i][key];
         }
-  
       }
 
       formData[KEY] = VALUE.trim();
 
-      // prevent empty entries into database
+      // prevent empty entries
       if ((formData[KEY] === "" || formData[KEY] === "0") && unansweredQuestion == 0 ) {
         unansweredQuestion = (+i + +1);
       }
