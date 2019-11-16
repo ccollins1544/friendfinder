@@ -3,8 +3,11 @@
  * @package friendfinder
  *****************************************/
 // Load Data
-var friends = require("../data/friends");
-var questions = require("../data/questions");
+var friends = require("../data/friends.js");
+var questions = require("../data/questions.js");
+
+// Models
+var tarot = require("../models/tarot.js");
 
 // Routing
 module.exports = function(app) {
@@ -19,8 +22,15 @@ module.exports = function(app) {
 
   // POST Routes
   app.post("/api/friends", function(req, res){
-    friends.push(req.body);
-    res.json(true);
-    // @todo Compatibility Logic 
+    
+    tarot.add_friend(req.body);
+    console.log("POST FRIENDS");
+    console.log(friends);
+
+    var matchedFriend = tarot.compatibility_check(req.body.name);
+    res.json({
+      ok: true,
+      matched: matchedFriend
+    });
   });
 };

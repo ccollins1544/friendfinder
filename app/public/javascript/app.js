@@ -1,74 +1,27 @@
-/*****************************************************
+/**
  * @subpackage survey
  * @package friendfinder
- * 
+ *
  * ===============[ TABLE OF CONTENTS ]===============
- * 0. Globals
+ * 0. GLOBALS
+ * 
  * 1. Functions
- *   1.1 generateRandomNumber()
- *   1.2 shuffle_array()
- *   1.3 runEffect()
- *   1.4 AlertMessage()
- *  
- * 2. Query Data
- *   2.1 questionsQuery()
+ *   1.1 AlertMessage() 
+ *   1.2 questionsQuery()
  * 
- * 3. Document Ready
+ * 2. Document Ready
+ *   2.1 Initialize
+ *   2.2 Heart Change Input
+ *   2.3 Change Info Button
+ *   2.4 Friend Form Submit
+ *   2.5 Compatibility Form Submit
  *****************************************************/
-/* ===============[ 0. GLOBALS ]======================*/
+/* ===============[ 0. GLOBALS ]=====================*/
+var newFriend = {};
 
-/* ===============[ 1. FUNCTIONS ]====================*/
+/* ===============[ 1. Functions ]====================*/
 /**
- * 1.1 generateRandomNumber
- * @param {int} min 
- * @param {max} max 
- */
-function generateRandomNumber(min = 0, max = 10) {
-  return Math.floor(Math.random() * Math.floor(+max - +min)) + +min;
-}
-
-/**
- * 1.2 shuffle_array
- * @param {array} some_array
- * @return {array} some_array - returns the shuffled version. 
- */
-function shuffle_array(some_array){
-  return some_array.sort( () => Math.random() - 0.5);
-}
-
-/**
- * 1.3 runEffect
- * Runs an effect on the given element. 
- * NOTE: this function depends on the following script links,
- * <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
- * <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
- * 
- * @param {element} element 
- * @param {integer} duration_seconds 
- * @param {string}  selectedEffect 
- */
-function runEffect(element, duration_seconds=2, selectedEffect="pulsate") {
-  // Most effect types need no options passed by default
-  var options = {};
-  
-  // some effects have required parameters
-  if ( selectedEffect === "scale" ) {
-    options = { percent: 50 };
-  } else if ( selectedEffect === "transfer" ) {
-    options = { to: "#button", className: "ui-effects-transfer" };
-  } else if ( selectedEffect === "size" ) {
-    options = { to: { width: 200, height: 60 } };
-  }
-  
-  // Run the effect
-  element.effect( selectedEffect, options, ( (duration_seconds * 1000)/4 ), setTimeout(function(){
-    element.removeAttr( "style" ).hide().fadeIn();
-  }, duration_seconds * 1000));
-} // END runEffect()
-
-
-/**
- * 1.4 AlertMessage()
+ * 1.1 AlertMessage()
  * @param {string} message - Message to go in the alert box
  * @param {string} addThisClass - defaults to empty string. Can be info, danger, or success. 
  */
@@ -111,11 +64,10 @@ function AlertMessage(message="", addThisClass="info", appendAfterElement){
 
   appendAfterElement.append(alertElement);
   return;
-} // END gameAlert()
+}
 
-/* ===============[ 2. Query Data ]====================*/
 /**
- * 2.1 questionsQuery()
+ * 1.2 questionsQuery()
  */
 function questionsQuery(){
   $.ajax({ url: "/api/questions", method: "GET" })
@@ -165,15 +117,14 @@ function questionsQuery(){
 };
 
 
-/**===============[ 3. Document Ready ]==================== 
- * NOTE: $(function(){ === $(document).ready(function() {
- * it's the shorthand version of document ready. 
- *********************************************************/
+/* ===============[ 2. Document Ready ]==================== */ 
 $(function(){
+  // 2.1 Initialize 
   questionsQuery();
   $(document).tooltip();
   $('#MatchModal').modal({ show: false});
 
+  // 2.2 Heart Change Input
   $('.question_answers').on('starrr:change', '.hearts', function(e, heart_rating){
     e.preventDefault();
     var question_number = $(this).data('question-number');
@@ -181,7 +132,7 @@ $(function(){
     form_input.val(heart_rating);
   });
 
-  // Change Info Button
+  // 2.3 Change Info Button
   $('#change_info').on('click', function(event){
     event.preventDefault();
     $('#friend_form > span').hide();
@@ -195,7 +146,7 @@ $(function(){
     $(this).hide();
   });
 
-  // Friend Form
+  // 2.4 Friend Form Submit
   $('#friend_form').on('submit', function(event){
     event.preventDefault();
 
@@ -247,11 +198,11 @@ $(function(){
       AlertMessage("You're missing something. Please double check that you have a valid URL and your name above", "danger", $("#friend_form"));
     }
 
-    console.log(isValid);
-    console.log(formData);
+    newFriend.name = formData['friend_name'];
+    newFriend.photo = formData['friend_image'];
   });
 
-  // Compatibility Form
+  // 2.5 Compatibility Form Submit
   $('#compatibility_form').on('submit', function(event){
     event.preventDefault();
 
@@ -282,9 +233,6 @@ $(function(){
         unansweredQuestion = (+i + +1);
       }
     }
-
-    console.log(unansweredQuestion);
-    console.log(formData);
     
     if( $('#friend_form').data("ready") == 0 ){ // not ready 
       AlertMessage("You're missing something. Please double check that you have a valid URL and your name above", "danger", $("#compatibility_form"));
@@ -293,13 +241,30 @@ $(function(){
     } else if(unansweredQuestion != 0 ){ // Missed a question
       AlertMessage("You're missing question " + unansweredQuestion, "danger", $("#compatibility_form"));
       return; 
-
+      
     } else { // ready!
       $('#alert_message').remove();
     }
+    
+    newFriend.scores = Object.values(formData);
+    $.post("/api/friends", newFriend, function(data){
+      if(data.ok){ 
 
-    $('#MatchModal').modal('show');
+        // You
+        $("#friend_name1").text(newFriend.name);
+        $("#friend_image1").attr("alt",newFriend.name);
+        $("#friend_image1").attr("src",newFriend.photo);
+
+        // Matched With
+        $("#friend_name2").text(data.matched.name);
+        $("#friend_image2").attr("alt",data.matched.name);
+        $("#friend_image2").attr("src",data.matched.photo);
+
+        $('#MatchModal').modal('show');
+      }else{
+        AlertMessage("Oops something went wrong...", "danger", $("#compatibility_form"));
+      }
+    });
   });
-
 
 }); // END $(document).ready(function() { 

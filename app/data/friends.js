@@ -3,19 +3,26 @@
  * @package friendfinder
  *****************************************/
 var friendsArray = [{
-  "name": "Ahmed",
+  "name": "Pumpkin",
   "photo": "https://www.duluthnewstribune.com/incoming/4684986-wtscwa-pumpkin-web.jpg/alternates/BASE_LANDSCAPE/pumpkin%20web.jpg",
   "scores": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "1",
+    "2",
   ]
 }];
 
